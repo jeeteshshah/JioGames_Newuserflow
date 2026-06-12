@@ -1963,6 +1963,9 @@
       <p>Install for fullscreen play, faster loading and offline access.</p>
     </div>
   </div>
+  <div id="pwa-ios-steps" style="display:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:12.5px;line-height:1.6;color:var(--text2);margin-bottom:14px">
+    Tap the <b style="color:var(--text)">Share</b> button <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px"><path d="M12 3v12M12 3l-4 4m4-4l4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> in Safari, then choose <b style="color:var(--text)">Add to Home Screen</b>.
+  </div>
   <button class="pwa-install" id="pwa-install-go">Install app</button>
   <button class="pwa-later" id="pwa-install-later">Not now</button>
 </div>
@@ -3236,6 +3239,13 @@ function goToPlanUpsell(){
     if(standalone || localStorage.getItem('pwaDismissed')) return;
     setTimeout(openSheet, 2000);
   });
+  /* iOS Safari never fires beforeinstallprompt — show manual instructions */
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  if(isIOS && !standalone && !localStorage.getItem('pwaDismissed')){
+    document.getElementById('pwa-ios-steps').style.display='block';
+    document.getElementById('pwa-install-go').style.display='none';
+    setTimeout(openSheet, 2500);
+  }
   document.getElementById('pwa-install-go').addEventListener('click', function(){
     closeSheet();
     if(deferred){ deferred.prompt(); deferred.userChoice.then(function(){ deferred=null; }); }
