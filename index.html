@@ -3216,7 +3216,7 @@ function goToPlanUpsell(){
     });
 
     // Wire promo game cards → game detail
-    document.querySelectorAll('.top10-card, .top10-img, .wide-card, .sq-card, .sq-card-img, .ftp-card').forEach(el=>{
+    document.querySelectorAll('.top10-card, .top10-img, .wide-card, .sq-card, .sq-card-img, .ftp-card, .tile-card, .hp-card, .trend-card, .banner-card, .quick-tile').forEach(el=>{
       el.style.cursor = 'pointer';
       el.addEventListener('click', ()=> openGameDetail('s-promo'));
     });
