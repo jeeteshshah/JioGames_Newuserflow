@@ -165,7 +165,9 @@
     .promo-headline{
       font-size:36px;font-weight:900;line-height:1.08;
       color:#fff;letter-spacing:-.02em;margin:0;
-      transition:opacity .4s var(--ease-out,cubic-bezier(0,0,.2,1)),transform .4s var(--ease-out,cubic-bezier(0,0,.2,1));
+      min-height:120px;
+      will-change:opacity,transform;
+      transition:opacity .35s ease,transform .35s ease;
     }
     .promo-headline em{font-style:normal;color:var(--jio)}
     .promo-pills{display:flex;flex-direction:row;gap:8px;flex-wrap:nowrap}
@@ -2791,13 +2793,18 @@
       clearInterval(_headlineTimer);
       _headlineTimer = setInterval(()=>{
         headlineEl.style.opacity = '0';
-        headlineEl.style.transform = 'translateY(8px)';
+        headlineEl.style.transform = 'translateY(-6px)';
         setTimeout(()=>{
           slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
           headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
-          headlineEl.style.opacity = '1';
-          headlineEl.style.transform = 'translateY(0)';
-        }, 400);
+          headlineEl.style.transform = 'translateY(6px)';
+          requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>{
+              headlineEl.style.opacity = '1';
+              headlineEl.style.transform = 'translateY(0)';
+            });
+          });
+        }, 350);
       }, 6000);
     };
     window._startPromoHeadline();
@@ -4301,13 +4308,18 @@ function goToPlanUpsell(){
       clearInterval(_headlineTimer);
       _headlineTimer = setInterval(()=>{
         headlineEl.style.opacity = '0';
-        headlineEl.style.transform = 'translateY(8px)';
+        headlineEl.style.transform = 'translateY(-6px)';
         setTimeout(()=>{
           slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
           headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
-          headlineEl.style.opacity = '1';
-          headlineEl.style.transform = 'translateY(0)';
-        }, 400);
+          headlineEl.style.transform = 'translateY(6px)';
+          requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>{
+              headlineEl.style.opacity = '1';
+              headlineEl.style.transform = 'translateY(0)';
+            });
+          });
+        }, 350);
       }, 6000);
     };
     window._startPromoHeadline();
