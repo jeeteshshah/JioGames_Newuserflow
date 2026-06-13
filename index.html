@@ -792,9 +792,9 @@
       display:flex; align-items:center; justify-content:center;
       transition:background .2s, transform .2s;
     }
-    .gt-heart svg{width:14px;height:14px;fill:none;stroke:rgba(255,255,255,.7);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:fill .2s,stroke .2s}
+    .gt-heart svg{width:14px;height:14px;fill:#fff;stroke:none;transition:fill .2s}
     .genre-tile.selected .gt-heart{animation:check-scale .25s cubic-bezier(.34,1.56,.64,1)}
-    .genre-tile.selected .gt-heart svg{fill:var(--jio);stroke:var(--jio)}
+    .genre-tile.selected .gt-heart svg{fill:#e53935;stroke:none}
 
     .pref-footer{
       padding:14px var(--gutter) 20px;
@@ -3125,6 +3125,7 @@ function goToPlanUpsell(){
       const b64 = document.getElementById('notif-html-b64').textContent;
       let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
       _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
+      frame.onload = () => frame.contentWindow.postMessage('notif-open','*');
       frame.srcdoc = _html;
       _notifLoaded = true;
     } else {
