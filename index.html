@@ -2775,27 +2775,37 @@
       }
     }, 6000);
 
-    // Headline slider
+    // Headline slider — starts fresh each time promo screen opens
     const HEADLINE_SLIDES = [
       'Play <em>150+</em><br>High quality<br>Mobile games',
       'Play <em>500+</em> games<br>across every screen'
     ];
     let slideIdx = 0;
+    let _headlineTimer = null;
     const headlineEl = document.querySelector('.promo-headline');
-    setInterval(()=>{
-      headlineEl.style.opacity = '0';
-      headlineEl.style.transform = 'translateY(8px)';
-      setTimeout(()=>{
-        slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
-        headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
-        headlineEl.style.opacity = '1';
-        headlineEl.style.transform = 'translateY(0)';
-      }, 400);
-    }, 6000);
+    window._startPromoHeadline = function(){
+      slideIdx = 0;
+      headlineEl.innerHTML = HEADLINE_SLIDES[0];
+      headlineEl.style.opacity = '1';
+      headlineEl.style.transform = 'translateY(0)';
+      clearInterval(_headlineTimer);
+      _headlineTimer = setInterval(()=>{
+        headlineEl.style.opacity = '0';
+        headlineEl.style.transform = 'translateY(8px)';
+        setTimeout(()=>{
+          slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
+          headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
+          headlineEl.style.opacity = '1';
+          headlineEl.style.transform = 'translateY(0)';
+        }, 400);
+      }, 6000);
+    };
+    window._startPromoHeadline();
   })();
 
   document.getElementById('s-splash').addEventListener('click',()=>{
     showScreen('s-promo');
+    if(window._startPromoHeadline) window._startPromoHeadline();
   });
 
   // Preload all iframes during splash so every page is instant
@@ -4035,27 +4045,37 @@ function goToPlanUpsell(){
       }
     }, 6000);
 
-    // Headline slider
+    // Headline slider — starts fresh each time promo screen opens
     const HEADLINE_SLIDES = [
       'Play <em>150+</em><br>High quality<br>Mobile games',
       'Play <em>500+</em> games<br>across every screen'
     ];
     let slideIdx = 0;
+    let _headlineTimer = null;
     const headlineEl = document.querySelector('.promo-headline');
-    setInterval(()=>{
-      headlineEl.style.opacity = '0';
-      headlineEl.style.transform = 'translateY(8px)';
-      setTimeout(()=>{
-        slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
-        headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
-        headlineEl.style.opacity = '1';
-        headlineEl.style.transform = 'translateY(0)';
-      }, 400);
-    }, 6000);
+    window._startPromoHeadline = function(){
+      slideIdx = 0;
+      headlineEl.innerHTML = HEADLINE_SLIDES[0];
+      headlineEl.style.opacity = '1';
+      headlineEl.style.transform = 'translateY(0)';
+      clearInterval(_headlineTimer);
+      _headlineTimer = setInterval(()=>{
+        headlineEl.style.opacity = '0';
+        headlineEl.style.transform = 'translateY(8px)';
+        setTimeout(()=>{
+          slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
+          headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
+          headlineEl.style.opacity = '1';
+          headlineEl.style.transform = 'translateY(0)';
+        }, 400);
+      }, 6000);
+    };
+    window._startPromoHeadline();
   })();
 
   document.getElementById('s-splash').addEventListener('click',()=>{
     showScreen('s-promo');
+    if(window._startPromoHeadline) window._startPromoHeadline();
   });
 
   // Preload all iframes during splash so every page is instant
