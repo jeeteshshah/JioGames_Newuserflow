@@ -3119,20 +3119,22 @@ function goToPlanUpsell(){
   window.openGameDetailFull = openGameDetailFull;
 
   let _notifLoaded = false;
+  function _preloadNotif(){
+    if(_notifLoaded) return;
+    const frame = document.getElementById('notif-frame');
+    const b64 = document.getElementById('notif-html-b64').textContent;
+    let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
+    _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
+    frame.srcdoc = _html;
+    _notifLoaded = true;
+  }
   function openNotifications(){
     const frame = document.getElementById('notif-frame');
-    if(!_notifLoaded){
-      const b64 = document.getElementById('notif-html-b64').textContent;
-      let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
-      _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
-      frame.onload = () => {
-        frame.contentWindow.postMessage('notif-open','*');
-        showScreen('s-notifications');
-      };
-      frame.srcdoc = _html;
-      _notifLoaded = true;
+    if(!_notifLoaded) _preloadNotif();
+    // wait for load if frame not ready yet, else switch immediately
+    if(!frame.contentDocument || frame.contentDocument.readyState !== 'complete'){
+      frame.onload = () => { showScreen('s-notifications'); };
     } else {
-      frame.contentWindow.postMessage('notif-open','*');
       showScreen('s-notifications');
     }
   }
@@ -3163,6 +3165,7 @@ function goToPlanUpsell(){
       _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
       frame.srcdoc = _html;
       _homeLoaded = true;
+      setTimeout(_preloadNotif, 800);
     }
     showScreen('s-home');
   };
