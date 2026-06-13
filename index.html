@@ -2792,6 +2792,28 @@
     showScreen('s-promo');
   });
 
+  // Preload all iframes during splash so every page is instant
+  (function(){
+    const frames = [
+      {id:'home-frame',  src:'home-html-b64',  delay:0},
+      {id:'notif-frame', src:'notif-html-b64', delay:300},
+      {id:'gd-frame',    src:'gd-html-b64',    delay:600},
+      {id:'nav-frame',   src:'nav-html-b64',   delay:900},
+    ];
+    frames.forEach(({id, src, delay})=>{
+      setTimeout(()=>{
+        const frame = document.getElementById(id);
+        if(frame && !frame.srcdoc){
+          frame.srcdoc = _decodeFrame(src);
+          if(id==='home-frame') _homeLoaded = true;
+          if(id==='notif-frame') _notifLoaded = true;
+          if(id==='gd-frame') _gdLoaded = true;
+          if(id==='nav-frame') _navLoaded = true;
+        }
+      }, delay);
+    });
+  })();
+
   /* ── Phone input — Indian format XXXXX XXXXX ── */
   const phoneInput=document.getElementById('phone-input');
   document.getElementById('promo-btn').addEventListener('click',e=>{
@@ -3083,20 +3105,21 @@ function goToPlanUpsell(){
   document.querySelectorAll('.sp-skip-btn').forEach(btn=>btn.addEventListener('click',()=>goToHome()));
 
   /* ── Home removed — flow ends here ── */
+  const _pkgBase = new URL('.', location.href).href;
+  function _decodeFrame(id){
+    const b64 = document.getElementById(id).textContent;
+    let h = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
+    return h.replace('__PKG_BASE__', _pkgBase);
+  }
+  function _frameReady(frame){ return frame.contentDocument && frame.contentDocument.readyState==='complete'; }
+
   let _navLoaded = false;
   function openNavPage(which){
     const frame = document.getElementById('nav-frame');
     const msg = 'nav-open-'+which;
-    if(!_navLoaded){
-      const b64 = document.getElementById('nav-html-b64').textContent;
-      let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
-      _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
-      frame.srcdoc = _html;
-      frame.addEventListener('load', ()=>frame.contentWindow.postMessage(msg,'*'), {once:true});
-      _navLoaded = true;
-    } else {
-      frame.contentWindow.postMessage(msg,'*');
-    }
+    if(!_navLoaded){ frame.srcdoc = _decodeFrame('nav-html-b64'); _navLoaded = true; }
+    if(_frameReady(frame)) frame.contentWindow.postMessage(msg,'*');
+    else frame.addEventListener('load', ()=>frame.contentWindow.postMessage(msg,'*'), {once:true});
     showScreen('s-navpages');
   }
 
@@ -3105,38 +3128,18 @@ function goToPlanUpsell(){
   function openGameDetailFull(ret){
     _gdReturn = ret || 's-home';
     const frame = document.getElementById('gd-frame');
-    if(!_gdLoaded){
-      const b64 = document.getElementById('gd-html-b64').textContent;
-      let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
-      _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
-      frame.srcdoc = _html;
-      _gdLoaded = true;
-    } else {
-      frame.contentWindow.postMessage('gd-open','*');
-    }
+    if(!_gdLoaded){ frame.srcdoc = _decodeFrame('gd-html-b64'); _gdLoaded = true; }
+    else frame.contentWindow.postMessage('gd-open','*');
     showScreen('s-gamedetail-full');
   }
   window.openGameDetailFull = openGameDetailFull;
 
   let _notifLoaded = false;
-  function _preloadNotif(){
-    if(_notifLoaded) return;
-    const frame = document.getElementById('notif-frame');
-    const b64 = document.getElementById('notif-html-b64').textContent;
-    let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
-    _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
-    frame.srcdoc = _html;
-    _notifLoaded = true;
-  }
   function openNotifications(){
     const frame = document.getElementById('notif-frame');
-    if(!_notifLoaded) _preloadNotif();
-    // wait for load if frame not ready yet, else switch immediately
-    if(!frame.contentDocument || frame.contentDocument.readyState !== 'complete'){
-      frame.onload = () => { showScreen('s-notifications'); };
-    } else {
-      showScreen('s-notifications');
-    }
+    if(!_notifLoaded){ frame.srcdoc = _decodeFrame('notif-html-b64'); _notifLoaded = true; }
+    if(_frameReady(frame)) showScreen('s-notifications');
+    else frame.onload = () => showScreen('s-notifications');
   }
   window.addEventListener('message', e=>{
     if(e.data==='notif-open') openNotifications();
@@ -3159,14 +3162,7 @@ function goToPlanUpsell(){
   let _homeLoaded = false;
   window.goToHome = function goToHome(){
     const frame = document.getElementById('home-frame');
-    if(!_homeLoaded){
-      const b64 = document.getElementById('home-html-b64').textContent;
-      let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
-      _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
-      frame.srcdoc = _html;
-      _homeLoaded = true;
-      setTimeout(_preloadNotif, 800);
-    }
+    if(!_homeLoaded){ frame.srcdoc = _decodeFrame('home-html-b64'); _homeLoaded = true; }
     showScreen('s-home');
   };
 })();
