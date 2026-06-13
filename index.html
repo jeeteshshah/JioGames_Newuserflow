@@ -3125,13 +3125,16 @@ function goToPlanUpsell(){
       const b64 = document.getElementById('notif-html-b64').textContent;
       let _html = new TextDecoder().decode(Uint8Array.from(atob(b64), c=>c.charCodeAt(0)));
       _html = _html.replace('__PKG_BASE__', new URL('.', location.href).href);
-      frame.onload = () => frame.contentWindow.postMessage('notif-open','*');
+      frame.onload = () => {
+        frame.contentWindow.postMessage('notif-open','*');
+        showScreen('s-notifications');
+      };
       frame.srcdoc = _html;
       _notifLoaded = true;
     } else {
       frame.contentWindow.postMessage('notif-open','*');
+      showScreen('s-notifications');
     }
-    showScreen('s-notifications');
   }
   window.addEventListener('message', e=>{
     if(e.data==='notif-open') openNotifications();
