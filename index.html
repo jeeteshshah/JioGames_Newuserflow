@@ -166,7 +166,6 @@
       font-size:36px;font-weight:900;line-height:1.08;
       color:#fff;letter-spacing:-.02em;margin:0;
       min-height:120px;
-      display:flex;flex-direction:column;justify-content:flex-end;
       will-change:opacity,transform;
       transition:opacity .35s ease,transform .35s ease;
     }
@@ -2780,35 +2779,45 @@
 
     // Headline slider — starts fresh each time promo screen opens
     const HEADLINE_SLIDES = [
-      'Play <em>150+</em><br>High quality<br>Mobile games',
-      'Play <em>500+</em> games<br>across every screen'
+      {html:'Play <em>150+</em><br>High quality<br>Mobile games', pt:0},
+      {html:'Play <em>500+</em> games<br>across every screen', pt:39}
     ];
     let slideIdx = 0;
     let _headlineTimer = null;
     const headlineEl = document.querySelector('.promo-headline');
+    function applySlide(idx, animate){
+      const s = HEADLINE_SLIDES[idx];
+      if(!animate){
+        headlineEl.style.transition = 'none';
+        headlineEl.style.opacity = '1';
+        headlineEl.style.transform = 'translateY(0)';
+        headlineEl.style.paddingTop = s.pt + 'px';
+        headlineEl.innerHTML = s.html;
+        requestAnimationFrame(()=>{ headlineEl.style.transition = ''; });
+      } else {
+        headlineEl.innerHTML = s.html;
+        headlineEl.style.transition = 'none';
+        headlineEl.style.paddingTop = s.pt + 'px';
+        headlineEl.style.transform = 'translateY(6px)';
+        requestAnimationFrame(()=>{
+          headlineEl.style.transition = '';
+          requestAnimationFrame(()=>{
+            headlineEl.style.opacity = '1';
+            headlineEl.style.transform = 'translateY(0)';
+          });
+        });
+      }
+    }
     window._startPromoHeadline = function(){
       slideIdx = 0;
-      headlineEl.style.transition = 'none';
-      headlineEl.style.opacity = '1';
-      headlineEl.style.transform = 'translateY(0)';
-      headlineEl.innerHTML = HEADLINE_SLIDES[0];
-      requestAnimationFrame(()=>{ headlineEl.style.transition = ''; });
+      applySlide(0, false);
       clearInterval(_headlineTimer);
       _headlineTimer = setInterval(()=>{
         headlineEl.style.opacity = '0';
         headlineEl.style.transform = 'translateY(-6px)';
         setTimeout(()=>{
           slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
-          headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
-          headlineEl.style.transition = 'none';
-          headlineEl.style.transform = 'translateY(6px)';
-          requestAnimationFrame(()=>{
-            headlineEl.style.transition = '';
-            requestAnimationFrame(()=>{
-              headlineEl.style.opacity = '1';
-              headlineEl.style.transform = 'translateY(0)';
-            });
-          });
+          applySlide(slideIdx, true);
         }, 400);
       }, 6000);
     };
@@ -4299,35 +4308,45 @@ function goToPlanUpsell(){
 
     // Headline slider — starts fresh each time promo screen opens
     const HEADLINE_SLIDES = [
-      'Play <em>150+</em><br>High quality<br>Mobile games',
-      'Play <em>500+</em> games<br>across every screen'
+      {html:'Play <em>150+</em><br>High quality<br>Mobile games', pt:0},
+      {html:'Play <em>500+</em> games<br>across every screen', pt:39}
     ];
     let slideIdx = 0;
     let _headlineTimer = null;
     const headlineEl = document.querySelector('.promo-headline');
+    function applySlide(idx, animate){
+      const s = HEADLINE_SLIDES[idx];
+      if(!animate){
+        headlineEl.style.transition = 'none';
+        headlineEl.style.opacity = '1';
+        headlineEl.style.transform = 'translateY(0)';
+        headlineEl.style.paddingTop = s.pt + 'px';
+        headlineEl.innerHTML = s.html;
+        requestAnimationFrame(()=>{ headlineEl.style.transition = ''; });
+      } else {
+        headlineEl.innerHTML = s.html;
+        headlineEl.style.transition = 'none';
+        headlineEl.style.paddingTop = s.pt + 'px';
+        headlineEl.style.transform = 'translateY(6px)';
+        requestAnimationFrame(()=>{
+          headlineEl.style.transition = '';
+          requestAnimationFrame(()=>{
+            headlineEl.style.opacity = '1';
+            headlineEl.style.transform = 'translateY(0)';
+          });
+        });
+      }
+    }
     window._startPromoHeadline = function(){
       slideIdx = 0;
-      headlineEl.style.transition = 'none';
-      headlineEl.style.opacity = '1';
-      headlineEl.style.transform = 'translateY(0)';
-      headlineEl.innerHTML = HEADLINE_SLIDES[0];
-      requestAnimationFrame(()=>{ headlineEl.style.transition = ''; });
+      applySlide(0, false);
       clearInterval(_headlineTimer);
       _headlineTimer = setInterval(()=>{
         headlineEl.style.opacity = '0';
         headlineEl.style.transform = 'translateY(-6px)';
         setTimeout(()=>{
           slideIdx = (slideIdx + 1) % HEADLINE_SLIDES.length;
-          headlineEl.innerHTML = HEADLINE_SLIDES[slideIdx];
-          headlineEl.style.transition = 'none';
-          headlineEl.style.transform = 'translateY(6px)';
-          requestAnimationFrame(()=>{
-            headlineEl.style.transition = '';
-            requestAnimationFrame(()=>{
-              headlineEl.style.opacity = '1';
-              headlineEl.style.transform = 'translateY(0)';
-            });
-          });
+          applySlide(slideIdx, true);
         }, 400);
       }, 6000);
     };
